@@ -1,5 +1,5 @@
 ---
- - name: Initial installing services on new instances
+ - name: Regular service and configs checking
    hosts: all
 
    vars:
@@ -19,10 +19,9 @@
    - name: Install basic utilites
      yum:
          name:
-                 - htop
-                 - vim
-                 - wget
-             
+             - htop
+             - vim
+             - wget
          state: latest
      become: yes
    
