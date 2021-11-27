@@ -1,0 +1,11 @@
+[testing]
+testing-server ansible_host=178.216.98.219
+
+[master]
+jenkins-master ansible_host=178.216.96.147
+
+[web]
+static-web ansible_host=178.216.96.186
+
+[all:vars]
+ansible_user=ec2-user

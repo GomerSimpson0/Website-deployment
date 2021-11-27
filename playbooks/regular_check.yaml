@@ -1,0 +1,39 @@
+---
+ - name: Initial installing services on new instances
+   hosts: all
+
+   vars:
+       home_dir: /home/ec2-user/
+       src_ssh_home: /home/ec2-user/configs/ssh/home/
+       dest_ssh_home: /home/ec2-user/.ssh/
+       src_ssh_etc: /home/ec2-user/configs/ssh/etc/
+       dest_ssh_etc: /etc/ssh/
+   
+   tasks:
+   - name: Installing epel-release
+     yum: 
+         name: epel-release 
+         state: latest
+     become: yes
+
+   - name: Install basic utilites
+     yum:
+         name:
+                 - htop
+                 - vim
+                 - wget
+             
+         state: latest
+     become: yes
+   
+   - name: Import ssh keys
+     copy: 
+         src: "{{src_ssh_home}}"
+         dest: "{{dest_ssh_home}}"
+
+   - name: Import ssh configs
+     copy: 
+         src: "{{src_ssh_etc}}"
+         dest: "{{dest_ssh_etc}}"
+     become: yes
+...
