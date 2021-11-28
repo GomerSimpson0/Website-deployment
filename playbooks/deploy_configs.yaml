@@ -1,0 +1,51 @@
+---
+ - name: Deploying configs to all nodes
+   hosts: all
+
+   vars:
+       home_dir: /home/ec2-user/
+       src_ssh_home: "{{ home_dir }}configs/ssh/home/"
+       dest_ssh_home: "{{ home_dir }}.ssh/"
+       src_ssh_etc: "{{ home_dir }}configs/ssh/etc/"
+       dest_ssh_etc: /etc/ssh/
+   
+   tasks:
+   - name: Installing epel-release
+     yum: 
+         name: epel-release 
+         state: latest
+     become: yes
+
+   - name: Install basic utilites
+     yum:
+         name:
+             - htop
+             - vim
+             - wget
+             - bind-utils
+         state: latest
+     become: yes
+   
+   - name: Upload jinja hostname template file
+     template:
+         src: "{{ home_dir }}repo/playbooks/hostname.j2"
+         dest: "{{ home_dir }}"
+         mode: 744
+
+   - name: Update hostname
+     shell:
+         cmd: "bash {{ home_dir }}hostname.j2"
+     become: yes
+
+   - name: Import ssh keys
+     copy: 
+         src: "{{ src_ssh_home }}"
+         dest: "{{ dest_ssh_home }}"
+
+   - name: Import ssh configs
+     copy: 
+         src: "{{ src_ssh_etc }}"
+         dest: "{{ dest_ssh_etc }}"
+         mode: 644
+     become: yes
+...
