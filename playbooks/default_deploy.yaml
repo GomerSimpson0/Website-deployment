@@ -1,0 +1,46 @@
+# Examples: use command "ansible-playbook -l <host> default_deployment.yaml"
+
+- name: Default deployment for new hosts
+  hosts: all
+
+  vars:
+    home: "/home/ec2-user"
+    
+  tasks:
+  - name: Installing epel-release
+    yum:
+      name: epel-release
+      state: latest
+    become: yes
+
+  - name: Installing basic utilites
+    yum:
+      name: 
+        - htop
+        - vim
+        - wget
+      state: latest
+    become: yes
+  
+  - name: Upload hostname file
+    copy:
+      src: "{{ home }}/templates/hostname.j2"
+      dest: "{{ home }}/change-hostname"
+      mode: 744
+
+  - name: Changing hostname
+    shell: 
+      cmd: "{{ home }}/change-hostname"
+
+  - name: Deploy ssh configs
+    copy: 
+      - src:   "{{ home }}/.ssh/id_rsa.pub"
+        dest:  "{{ home }}/.ssh/id_rsa.pub"
+      - src:   "{{ home }}/.ssh/authorized_keys"
+        dest:  "{{ home }}/.ssh/authorized_keys"
+  
+  - name: Deploy ssh-client configs
+    copy: 
+      src:   "/etc/ssh/ssh_config"
+      dest:  "/etc/ssh/ssh_config"
+    become: yes
