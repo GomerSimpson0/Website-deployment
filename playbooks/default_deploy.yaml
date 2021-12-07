@@ -1,4 +1,4 @@
-# Examples: use command "ansible-playbook -l <host> default_deployment.yaml"
+# Examples: use command "ansible-playbook -l <host> default_deployment.yaml" to specify target host
 
 - name: Default deployment for new hosts
   hosts: all
@@ -19,28 +19,34 @@
         - htop
         - vim
         - wget
+        - git
+        - bind-utils
       state: latest
     become: yes
   
   - name: Upload hostname file
-    copy:
-      src: "{{ home }}/templates/hostname.j2"
+    template:
+      src: "{{ home }}/configfiles/templates/hostname.j2"
       dest: "{{ home }}/change-hostname"
       mode: 744
 
   - name: Changing hostname
     shell: 
       cmd: "{{ home }}/change-hostname"
+    become: true
 
-  - name: Deploy ssh configs
-    copy: 
-      - src:   "{{ home }}/.ssh/id_rsa.pub"
-        dest:  "{{ home }}/.ssh/id_rsa.pub"
-      - src:   "{{ home }}/.ssh/authorized_keys"
-        dest:  "{{ home }}/.ssh/authorized_keys"
+  - name: Deploy authorized keys file 
+    copy:
+      src:   "{{ home }}/.ssh/authorized_keys"
+      dest:  "{{ home }}/.ssh/authorized_keys"
   
   - name: Deploy ssh-client configs
     copy: 
       src:   "/etc/ssh/ssh_config"
       dest:  "/etc/ssh/ssh_config"
     become: yes
+
+  - name: Cleaning garbage
+    file:
+      path: "{{ home }}/change-hostname"
+      state: absent
