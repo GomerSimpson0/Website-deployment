@@ -1,19 +1,18 @@
-# Examples: use command "ansible-playbook -l <host> default_deployment.yaml" to specify target host
+# Examples: use command "ansible-playbook -l <host> default_deployment.yaml" to specify target host you want to configure
 
 - name: Default deployment for new hosts
-  hosts: all
 
   vars:
     home: "/home/ec2-user"
     
   tasks:
-  - name: Installing epel-release
+  - name: Installing epel-release repo
     yum:
       name: epel-release
       state: latest
     become: yes
 
-  - name: Installing basic utilites
+  - name: Installing basic utils
     yum:
       name: 
         - htop
@@ -24,7 +23,7 @@
       state: latest
     become: yes
   
-  - name: Upload hostname file
+  - name: Upload target hostname file
     template:
       src: "{{ home }}/configfiles/templates/hostname.j2"
       dest: "{{ home }}/change-hostname"
