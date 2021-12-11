@@ -1,7 +1,8 @@
 # Examples: use command "ansible-playbook -l <host> default_deployment.yaml" to specify target host you want to configure
 
-- name: Default deployment for new hosts
-
+- name: Actual configs deployment
+  gather_facts: false
+  hosts: all
   vars:
     home: "/home/ec2-user"
     
@@ -22,19 +23,35 @@
         - bind-utils
       state: latest
     become: yes
+
+  - name: Getting target hostname
+    ansible.builtin.command: hostname
+    register: target_hostname
+
+    #  - name: vars output
+    #debug:
+    #  var: target_hostname.stdout
+
+  - block:
+    - name: Upload target hostname file
+      template:
+        src: "{{ home }}/configfiles/templates/hostname.j2"
+        dest: "{{ home }}/change-hostname"
+        mode: 744
   
-  - name: Upload target hostname file
-    template:
-      src: "{{ home }}/configfiles/templates/hostname.j2"
-      dest: "{{ home }}/change-hostname"
-      mode: 744
+    - name: Changing hostname
+      shell: 
+        cmd: "{{ home }}/change-hostname"
+      become: true
 
-  - name: Changing hostname
-    shell: 
-      cmd: "{{ home }}/change-hostname"
-    become: true
+    - name: Cleaning garbage
+      file:
+        path: "{{ home }}/change-hostname"
+        state: absent 
 
-  - name: Deploy authorized keys file 
+    when: target_hostname.stdout != hostname
+
+  - name: Deploy authorized_keys file 
     copy:
       src:   "{{ home }}/.ssh/authorized_keys"
       dest:  "{{ home }}/.ssh/authorized_keys"
@@ -45,7 +62,9 @@
       dest:  "/etc/ssh/ssh_config"
     become: yes
 
-  - name: Cleaning garbage
-    file:
-      path: "{{ home }}/change-hostname"
-      state: absent
+  - name: Import .bashrc file
+    copy: 
+      src:  "{{ home }}/.bashrc"
+      dest: "{{ home }}/.bashrc"
+
+
