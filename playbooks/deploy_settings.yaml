@@ -21,6 +21,9 @@
         - wget
         - git
         - bind-utils
+        - java-1.8.0-openjdk
+        - python2
+        - python3
       state: latest
     become: yes
 
@@ -35,7 +38,7 @@
   - block:
     - name: Upload target hostname file
       template:
-        src: "{{ home }}/configfiles/templates/hostname.j2"
+        src: "./templates/hostname.j2"
         dest: "{{ home }}/change-hostname"
         mode: 744
   
@@ -53,18 +56,22 @@
 
   - name: Deploy authorized_keys file 
     copy:
-      src:   "{{ home }}/.ssh/authorized_keys"
+      src:   "./configs/ssh/authorized_keys"
       dest:  "{{ home }}/.ssh/authorized_keys"
-  
+      mode: 600
+      owner: ec2-user
+ 
   - name: Deploy ssh-client configs
     copy: 
-      src:   "/etc/ssh/ssh_config"
+      src:   "./configs/ssh/ssh_config"
       dest:  "/etc/ssh/ssh_config"
+      owner: root
     become: yes
 
   - name: Import .bashrc file
     copy: 
-      src:  "{{ home }}/.bashrc"
+      src:  "./configs/bash/bashrc"
       dest: "{{ home }}/.bashrc"
+      owner: ec2-user
 
 

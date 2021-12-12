@@ -1,5 +1,6 @@
 - name: Deploy nginx web server
   hosts: prod
+  gather_facts: false
 
   vars: 
     home: "/home/ec2-user"
@@ -9,6 +10,13 @@
     yum: 
       name: nginx
       state: latest
+    become: yes
+
+  - name: Importing nginx configs
+    copy: 
+      src: "./configs/nginx/"
+      dest: /etc/nginx/
+      force: yes
     become: yes
 
   - name: Enable startup running for nginx service
@@ -25,7 +33,7 @@
 
   - name: Copy source web page to target web server
     copy: 
-      src: "/home/ec2-user/configfiles/web-source/"
+      src: "./web-source/"
       dest: "/usr/share/nginx/html/"
     become: true
 
@@ -34,4 +42,4 @@
       name: nginx
       state: started
     become: yes
-
+  
