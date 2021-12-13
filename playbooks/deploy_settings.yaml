@@ -56,22 +56,21 @@
 
   - name: Deploy authorized_keys file 
     copy:
-      src:   "./configs/ssh/authorized_keys"
+      src:   "ssh/authorized_keys"
       dest:  "{{ home }}/.ssh/authorized_keys"
       mode: 600
       owner: ec2-user
+    become: true
  
   - name: Deploy ssh-client configs
     copy: 
-      src:   "./configs/ssh/ssh_config"
+      src:   "ssh/ssh_config"
       dest:  "/etc/ssh/ssh_config"
       owner: root
     become: yes
 
   - name: Import .bashrc file
     copy: 
-      src:  "./configs/bash/bashrc"
+      src:  "bash/bashrc"
       dest: "{{ home }}/.bashrc"
       owner: ec2-user
-
-
