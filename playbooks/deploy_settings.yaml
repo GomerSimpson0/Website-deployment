@@ -58,9 +58,6 @@
     copy:
       src:   "{{ pwd }}/configs/ssh/authorized_keys"
       dest:  "{{ home }}/.ssh/authorized_keys"
-      mode: 600
-      owner: ec2-user
-    become: true
  
   - name: Deploy ssh-client configs
     copy: 
