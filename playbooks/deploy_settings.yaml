@@ -71,16 +71,3 @@
       src:  "{{ pwd }}/configs/bash/bashrc"
       dest: "{{ home }}/.bashrc"
       owner: ec2-user
-
-  - name: Import dns records files to dns server
-    hosts: master
-    copy:
-      src: "{{ pwd }}/configs/dns/"
-      dest: "/var/named/"
-    become: yes
-  
-  - name: Restart named service
-    systemd:
-      name: named
-      state: restarted
-    become: yes
