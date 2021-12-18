@@ -31,7 +31,7 @@
     ansible.builtin.command: hostname
     register: target_hostname
 
-    #  - name: vars output
+    #  - name: vars output # For debug output only
     #debug:
     #  var: target_hostname.stdout
 
