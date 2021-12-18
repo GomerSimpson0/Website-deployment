@@ -1,0 +1,7 @@
+---
+ - name: Deploy Actual DNS recors to dns server
+   hosts: master
+   gather_facts: false
+
+   roles:
+     - dns_deploy

@@ -1,0 +1,67 @@
+---
+# tasks file for default-configs
+
+ - name: Installing epel-release repo
+   yum:
+     name: epel-release
+     state: latest
+   become: yes
+
+ - name: Installing basic utils
+   yum:
+     name:
+       - htop
+       - vim
+       - wget
+       - git
+       - bind-utils
+       - java-1.8.0-openjdk
+       - python2
+       - python3
+     state: latest
+   become: yes
+
+ - name: Getting target hostname
+   ansible.builtin.command: hostname
+   register: target_hostname
+
+   #  - name: vars output # For debug output only
+   #debug:
+   #  var: target_hostname.stdout
+
+ - block:
+   - name: Upload target hostname file
+     template:
+       src: "hostname.j2"
+       dest: "{{ home }}/change-hostname"
+       mode: 744
+
+   - name: Changing hostname
+     shell:
+       cmd: "{{ home }}/change-hostname"
+     become: true
+
+   - name: Cleaning garbage
+     file:
+       path: "{{ home }}/change-hostname"
+       state: absent
+
+   when: target_hostname.stdout != hostname
+
+ - name: Deploy authorized_keys file
+   copy:
+     src:   "ssh/authorized_keys"
+     dest:  "{{ home }}/.ssh/authorized_keys"
+
+ - name: Deploy ssh-client configs
+   copy:
+     src:   "ssh/ssh_config"
+     dest:  "/etc/ssh/ssh_config"
+     owner: root
+   become: yes
+
+ - name: Import .bashrc file
+   copy:
+     src:  "bash/bashrc"
+     dest: "{{ home }}/.bashrc"
+     owner: ec2-user

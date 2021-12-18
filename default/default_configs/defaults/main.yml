@@ -1,0 +1,4 @@
+---
+# defaults file for default-configs
+
+home: "/home/ec2-user"
