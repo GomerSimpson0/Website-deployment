@@ -1,0 +1,19 @@
+$TTL 86400
+@   IN  SOA     ns1.rosehosting.local. root.rosehosting.local. (
+                                              3           ;Serial
+                                              3600        ;Refresh
+                                              1800        ;Retry
+                                              604800      ;Expire
+                                              86400       ;Minimum TTL
+)
+
+;Name Server Information
+@       IN  NS      ns1.devops.
+
+;IP address of Name Server
+ns1       IN  A       192.168.0.13
+
+;A - Record HostName To Ip Address
+prod-1     IN  A       192.168.0.14
+prod-2     IN  A       192.168.0.16
+testing-1     IN  A       192.168.0.15

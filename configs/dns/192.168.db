@@ -1,0 +1,19 @@
+$TTL 86400
+@   IN  SOA     ns1.rosehosting.local. root.rosehosting.local. (
+                                       3           ;Serial
+                                       3600        ;Refresh
+                                       1800        ;Retry
+                                       604800      ;Expire
+                                       86400       ;Minimum TTL
+)
+
+;Name Server Information
+@         IN      NS         ns1.rosehosting.local.
+
+;Reverse lookup for Name Server
+0.13       IN  PTR     ns1.jenkins.devops.
+
+;PTR Record IP address to HostName
+0.14      IN  PTR     prod-1.devops.
+0.15      IN  PTR     testing-1.devops.
+0.16	IN	PTR	prod-2.devops.
