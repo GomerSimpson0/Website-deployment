@@ -1,0 +1,14 @@
+---
+# tasks file for dns_deploy
+
+ - name: Import DNS records to DNS server
+   copy:
+     src: "dns/"
+     dest: "/var/named/"
+   become: yes
+   
+ - name: Restart named service
+   systemd:
+     name: named
+     state: restarted
+   become: yes

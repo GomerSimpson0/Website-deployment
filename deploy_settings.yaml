@@ -1,0 +1,8 @@
+# Examples: use command "ansible-playbook -l <host> default_deployment.yaml" to specify target host you want to configure
+
+- name: Actual configs deployment
+  gather_facts: false
+  hosts: all
+    
+  roles:
+    - default_configs
