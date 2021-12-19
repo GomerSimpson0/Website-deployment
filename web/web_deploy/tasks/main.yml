@@ -67,6 +67,12 @@
        dest: "/etc/nginx.tmp/nginx.conf"
      become: yes
 
+   - name: Importing nginx configs to temp dir
+     copy:
+       src: "nginx/"
+       dest: "/etc/nginx.tmp/"
+     become: true
+
    - name: Remove old nginx directory
      file:
        path: "/etc/nginx/"
@@ -77,12 +83,7 @@
      command: "mv /etc/nginx.tmp/ /etc/nginx/"
      become: true
  
-   - name: Importing nginx configs to temp dir
-     copy:
-       src: "nginx/"
-       dest: "/etc/nginx.tmp/"
-     become: true
-  
+     
    - name: Start nginx service
      systemd: 
        name: nginx
