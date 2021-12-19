@@ -15,7 +15,7 @@
 
  - name: Clone github repo with source code
    git:
-     repo: "https://github.com/GomerSimpson0/website.git"
+     repo: "https://github.com/GomerSimpson0/configfiles.git"
      dest: "/home/jenkins/"
      force: true
 
