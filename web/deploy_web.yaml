@@ -1,0 +1,6 @@
+- name: Deploy nginx web server source code and actual configs
+  hosts: prod
+  gather_facts: false
+
+  roles:
+    - web_deploy

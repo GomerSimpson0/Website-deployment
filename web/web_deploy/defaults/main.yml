@@ -1,0 +1,5 @@
+---
+# defaults file for web_deploy
+
+home:        "/home/ec2-user"
+actual_tag:  "{{ lookup('file', 'tag') }}"

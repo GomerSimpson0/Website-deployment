@@ -1,0 +1,118 @@
+---
+# tasks file for web_deploy
+
+ - name: Update nginx
+   yum: 
+     name: nginx
+     state: latest
+   become: yes
+
+ - name: Enable startup running for nginx
+   systemd:
+     name: nginx
+     enabled: yes
+   become : true
+
+ - name: Clone github repo with source code
+   git:
+     repo: "https://github.com/GomerSimpson0/website.git"
+     dest: "/home/jenkins/"
+     force: true
+
+# - name: Get actual version tag
+#   command: 
+#     cmd: "cat version"
+#   register: actual_tag
+
+ - name: Check website tag
+   stat:
+     path: "/usr/share/nginx/{{ actual_tag }}/"
+   register: is_equal_tag
+
+# - name: var
+#   debug:
+#     var: is_equal_tag
+
+
+ - block:
+
+   - name: Creating dest dir with actual dir tag
+     file: 
+       dest: "/usr/share/nginx/{{ actual_tag }}/"
+       state: directory
+     become: yes
+
+   - name: Move updated source code to dir
+     copy:
+       src: "web-source/"
+       dest: "/usr/share/nginx/{{ actual_tag }}/"
+     become: yes
+
+   - name: Adding necessary chmod rules
+     file:
+       dest: "/usr/share/nginx/{{ actual_tag }}/"
+       recurse: true
+       mode: u+rx,g+rx,o+rx
+     become: true
+
+   - name: Creating temp dir
+     file:
+       path: "/etc/nginx.tmp/"
+       state: directory
+     become: true
+
+   - name: Importing jinja nginx configs to temp dir
+     template: 
+       src: "nginx/nginx.conf.j2"
+       dest: "/etc/nginx.tmp/nginx.conf"
+     become: yes
+
+   - name: Remove old nginx directory
+     file:
+       path: "/etc/nginx/"
+       state: absent
+     become: true
+
+   - name: Rename temp dir
+     command: "mv /etc/nginx.tmp/ /etc/nginx/"
+     become: true
+ 
+   - name: Importing nginx configs to temp dir
+     copy:
+       src: "nginx/"
+       dest: "/etc/nginx.tmp/"
+     become: true
+  
+   - name: Start nginx service
+     systemd: 
+       name: nginx
+       state: started
+     become: yes
+   
+   - name: Reload nginx service
+     systemd:
+       name: nginx
+       state: reloaded
+     become: yes
+   
+   when: is_equal_tag.stat.exists == False
+
+   rescue:
+     - name: Clear imported website dir
+       file:
+         path: "/usr/share/nginx/{{ actual_tag }}/"
+         state: absent
+       become: true
+
+     - name: Clear imported config dir
+       file:
+         path: "/etc/nginx.tmp"
+         state: absent
+       become: true
+   
+ - block:
+   - name: Report error in tag naming
+     debug:
+       msg: "It looks like you did not update actual website tag. Please update it and try again"
+  
+   when: is_equal_tag.stat.exists == True
