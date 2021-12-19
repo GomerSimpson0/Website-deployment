@@ -1,5 +1,5 @@
 $TTL 86400
-@   IN  SOA     ns1.rosehosting.local. root.rosehosting.local. (
+@   IN  SOA     ns1.devops. root.devops. (
                                               3           ;Serial
                                               3600        ;Refresh
                                               1800        ;Retry

@@ -3,7 +3,7 @@
 
  - name: Import DNS records to DNS server
    copy:
-     src: "dns/"
+     src: "./"
      dest: "/var/named/"
    become: yes
    
