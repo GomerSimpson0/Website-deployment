@@ -1,6 +1,6 @@
 - name: Deploy actual website code and nginx configs
-  hosts: prod
+  hosts: backend
   gather_facts: false
 
   roles:
-    - web_deploy
+    - back

@@ -1,0 +1,8 @@
+---
+ - name: Deploy actual load balancers configs
+   hosts: testing
+   gather_facts: false
+   become: true
+   
+   roles:
+     - lb

@@ -65,3 +65,13 @@
      src:  "bash/bashrc"
      dest: "{{ home }}/.bashrc"
      owner: ec2-user
+
+ - name: Create dir for jenkins
+   file:
+     path: "/home/jenkins/"
+     state: directory
+     mode: 0700
+     owner: ec2-user
+     group: ec2-user
+     recurse: true
+   become: true

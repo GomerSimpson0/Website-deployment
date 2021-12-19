@@ -1,5 +1,5 @@
 $TTL 86400
-@   IN  SOA     ns1.rosehosting.local. root.rosehosting.local. (
+@   IN  SOA     ns1.master.devops. root.master.devops. (
                                        3           ;Serial
                                        3600        ;Refresh
                                        1800        ;Retry
@@ -8,14 +8,14 @@ $TTL 86400
 )
 
 ;Name Server Information
-@         IN      NS         ns1.master.local.
+@         IN      NS         ns1.master.devops.
 
 ;Reverse lookup for Name Server
-0.13       IN  PTR     ns1.master.devops.
+13       IN  PTR     ns1.master.devops.
 
 ;PTR Record IP address to HostName
-0.13      IN  PTR     master.devops.
-0.14      IN  PTR     prod-1.devops.
-0.16	  IN  PTR     prod-2.devops.
-0.15      IN  PTR     testing-1.devops.
-0.17      IN  PTR     lb-1.devops. 
+13      IN  PTR     master.devops.
+14      IN  PTR     back1.devops.
+16	IN  PTR     back2.devops.
+15      IN  PTR     testing1.devops.
+17      IN  PTR     lb1.devops. 

@@ -7,24 +7,20 @@
      state: latest
    become: yes
 
- - name: Enable startup running for nginx
+ - name: Start and enable nginx
    systemd:
      name: nginx
+     state: started
      enabled: yes
    become : true
 
- - name: Clone github repo with source code
-   git:
-     repo: "https://github.com/GomerSimpson0/configfiles.git"
-     dest: "/home/jenkins/"
-     force: true
+# - name: Clone github repo with source code
+#   git:
+#     repo: "https://github.com/GomerSimpson0/configfiles.git"
+#     dest: "/home/jenkins/"
+#     force: true
 
-# - name: Get actual version tag
-#   command: 
-#     cmd: "cat version"
-#   register: actual_tag
-
- - name: Check website tag
+ - name: Get current website tag
    stat:
      path: "/usr/share/nginx/{{ actual_tag }}/"
    register: is_equal_tag
@@ -35,14 +31,13 @@
 
 
  - block:
-
    - name: Creating dest dir with actual dir tag
      file: 
        dest: "/usr/share/nginx/{{ actual_tag }}/"
        state: directory
      become: yes
 
-   - name: Move updated source code to dir
+   - name: Move actual source code to dir
      copy:
        src: "web-source/"
        dest: "/usr/share/nginx/{{ actual_tag }}/"
@@ -52,7 +47,7 @@
      file:
        dest: "/usr/share/nginx/{{ actual_tag }}/"
        recurse: true
-       mode: u+rx,g+rx,o+rx
+       mode: 0555
      become: true
 
    - name: Creating temp dir
@@ -83,13 +78,6 @@
      command: "mv /etc/nginx.tmp/ /etc/nginx/"
      become: true
  
-     
-   - name: Start nginx service
-     systemd: 
-       name: nginx
-       state: started
-     become: yes
-   
    - name: Reload nginx service
      systemd:
        name: nginx

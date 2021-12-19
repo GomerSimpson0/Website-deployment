@@ -4,4 +4,4 @@
    gather_facts: false
 
    roles:
-     - dns_deploy
+     - dns
