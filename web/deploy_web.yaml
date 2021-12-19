@@ -1,4 +1,4 @@
-- name: Deploy nginx web server source code and actual configs
+- name: Deploy actual website code and nginx configs
   hosts: prod
   gather_facts: false
 
