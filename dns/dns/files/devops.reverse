@@ -19,3 +19,4 @@ $TTL 86400
 16	IN  PTR     back2.devops.
 15      IN  PTR     testing1.devops.
 17      IN  PTR     lb1.devops. 
+18      IN  PTR     lb2.devops.

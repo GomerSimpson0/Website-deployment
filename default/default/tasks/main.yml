@@ -21,6 +21,15 @@
      state: latest
    become: yes
 
+ - name: Importing ssh key
+   copy: 
+     src: "/home/private/id_rsa"
+     dest: "/home/ec2-user/.ssh/id_rsa"
+     mode: 0600
+     owner: ec2-user
+     group: ec2-user
+   become: true
+
  - name: Getting target hostname
    ansible.builtin.command: hostname
    register: target_hostname
@@ -75,3 +84,4 @@
      group: ec2-user
      recurse: true
    become: true
+

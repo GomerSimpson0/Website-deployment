@@ -1,6 +1,6 @@
 ---
  - name: Deploy actual load balancers configs
-   hosts: testing
+   hosts: lb
    gather_facts: false
    become: true
    

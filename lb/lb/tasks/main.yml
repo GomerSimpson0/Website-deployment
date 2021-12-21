@@ -6,13 +6,22 @@
      name: haproxy
      state: latest
 
- - name: Start and enable haproxy
+ - name: Updating keepalived
+   yum:
+     name: keepalived
+     state: latest
+
+ - name: Enable startup running for haproxy
    systemd:
      name: haproxy
      enabled: true
-     state: started
 
- - name: Creating temp dir for configs
+ - name: Enable startup running for keepalived
+   systemd:
+     name: keepalived
+     enabled: true
+
+ - name: Creating temp haproxy dir for configs
    file:
      path: "/etc/haproxy.tmp/"
      state: directory
@@ -20,23 +29,136 @@
      owner: root
      group: root
 
- - name: Copying actual configs to temp dir
+ - name: Copying actual configs to temp haproxy dir
    template:
      src: "./haproxy.cfg.j2"
      dest: "/etc/haproxy.tmp/haproxy.cfg"
      owner: ec2-user
      group: ec2-user
      mode: 0600
-
- - name: Remove old config dir
+ 
+ - name: Remove old haproxy backup dir
    file:
-     path: "/etc/haproxy/"
+     path: "/etc/haproxy.backup"
      state: absent
 
- - name: Rename temp to config dir
+ - name: Rename old haproxy config dir to backup dir
+   command: "mv /etc/haproxy /etc/haproxy.backup"
+
+ - name: Rename temp to config haproxy dir
    command: "mv /etc/haproxy.tmp/ /etc/haproxy/"
+
+ - name: Start haproxy
+   systemd:
+     name: haproxy
+     state: started
 
  - name: Reload haproxy
    systemd:
      name: haproxy
      state: reloaded
+
+ - name: Import script with api keys
+   copy:
+     src: "/home/private/c2rc.sh"
+     dest: "/home/ec2-user/c2rc.sh"
+     owner: ec2-user
+     group: ec2-user
+     mode: 0777
+
+ - name: Launch script with api keys
+   command: "bash /home/ec2-user/c2rc.sh"
+
+ - block:  # lb1 actions
+   - name: Creating temp keppalived dir for configs
+     file:
+       path: "/etc/keepalived.tmp/"
+       state: directory
+       mode: 0755
+       owner: root
+       group: root
+
+   - name: Copying ip change script to temp keppalived dir
+     copy:
+       src: "./change-eip.bash.lb1"
+       dest: "/etc/keepalived.tmp/change-eip.bash"
+       owner: root
+       group: root
+       mode: 0777
+
+   - name: Copying actual configs to temp keppalived dir
+     copy:
+       src: "./keepalived.conf.lb1"
+       dest: "/etc/keepalived.tmp/keepalived.conf"
+       owner: root
+       group: root
+       mode: 0644
+  
+   - name: Remove old backup keepalived dir
+     file:
+       path: "/etc/keepalived.backup"
+       state: absent
+  
+   - name: Rename old keppalived config dir to backup dir
+     command: "mv /etc/keepalived/ /etc/keepalived.backup/"
+  
+   - name: Rename temp to config keepalived dir
+     command: "mv /etc/keepalived.tmp/ /etc/keepalived/"
+  
+   - name: Start keepalived
+     systemd:
+       name: keepalived
+       state: started
+  
+   - name: Reload keppalived
+     systemd:
+       name: keepalived
+
+   when: hostname == "lb1"
+
+ - block:  # lb2 actions
+   - name: Creating temp keppalived dir for configs
+     file:
+       path: "/etc/keepalived.tmp/"
+       state: directory
+       mode: 0755
+       owner: root
+       group: root
+
+   - name: Copying ip change script to temp keppalived dir
+     copy:
+       src: "./change-eip.bash.lb2"
+       dest: "/etc/keepalived.tmp/change-eip.bash"
+       owner: root
+       group: root
+       mode: 0777 
+
+   - name: Copying actual configs to temp keppalived dir
+     copy:
+       src: "./keepalived.conf.lb2"
+       dest: "/etc/keepalived.tmp/keepalived.conf"
+       owner: root
+       group: root
+       mode: 0644
+  
+   - name: Remove old backup keepalived dir
+     file:
+       path: "/etc/keepalived.backup"
+       state: absent
+  
+   - name: Rename old keppalived config dir to backup dir
+     command: "mv /etc/keepalived/ /etc/keepalived.backup/"
+  
+   - name: Rename temp to config keepalived dir
+     command: "mv /etc/keepalived.tmp/ /etc/keepalived/"
+  
+   - name: Start keepalived
+     systemd:
+       name: keepalived
+       state: started
+  
+   - name: Reload keppalived
+     systemd:
+       name: keepalived
+
+   when: hostname == "lb2"
