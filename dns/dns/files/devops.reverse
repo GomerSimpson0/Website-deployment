@@ -20,3 +20,4 @@ $TTL 86400
 15      IN  PTR     testing1.devops.
 17      IN  PTR     lb1.devops. 
 18      IN  PTR     lb2.devops.
+19	IN  PTR     docker.devops.
