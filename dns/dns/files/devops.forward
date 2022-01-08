@@ -21,3 +21,5 @@ testing1  IN  A       192.168.0.15
 lb1       IN  A       192.168.0.17
 lb2       IN  A       192.168.0.18
 docker    IN  A       192.168.0.19
+mongo1    IN  A       192.168.0.21
+mongo2    IN  A       192.168.0.20

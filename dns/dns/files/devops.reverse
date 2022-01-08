@@ -21,3 +21,5 @@ $TTL 86400
 17      IN  PTR     lb1.devops. 
 18      IN  PTR     lb2.devops.
 19	IN  PTR     docker.devops.
+21      IN  PTR     mongo1.devops.
+20      IN  PTR     mongo2.devops.
