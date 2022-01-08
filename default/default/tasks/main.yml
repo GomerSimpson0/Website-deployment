@@ -10,6 +10,7 @@
  - name: Installing basic utils
    yum:
      name:
+       - netcat
        - htop
        - vim
        - wget
