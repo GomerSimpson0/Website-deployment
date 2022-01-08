@@ -1,0 +1,104 @@
+---
+# tasks file for lb_deploy
+
+ - name: Updating haproxy
+   yum: 
+     name: haproxy
+     state: latest
+
+ - name: Updating keepalived
+   yum:
+     name: keepalived
+     state: latest
+
+ - name: Enable startup running for haproxy
+   systemd:
+     name: haproxy
+     enabled: true
+
+ - name: Enable startup running for keepalived
+   systemd:
+     name: keepalived
+     enabled: true
+
+ - name: Copy old haproxy configs to backup dir
+   copy:
+     remote_src: true
+     src: "/etc/haproxy/"
+     dest: "/etc/haproxy.backup/"
+     force: true
+
+ - name: Copying actual configs to config haproxy dir
+   template:
+     src: "./haproxy.cfg.j2"
+     dest: "/etc/haproxy/haproxy.cfg"
+     owner: ec2-user
+     group: ec2-user
+     mode: 0600
+   become: true
+ 
+ - name: Start haproxy
+   systemd:
+     name: haproxy
+     state: started
+
+ - name: Reload haproxy
+   systemd:
+     name: haproxy
+     state: reloaded
+
+ - name: Creating awscli config dir
+   file:
+     path: "/home/ec2-user/.aws/"
+     state: directory
+     owner: ec2-user
+     group: ec2-user
+     mode: 0755
+
+ - name: Import awscli configs
+   copy:
+     src: "/home/private/aws_config"
+     dest: "/home/ec2-user/.aws/config"
+     owner: ec2-user
+     group: ec2-user
+     mode: 0600
+
+ - name: Import awscli configs
+   copy:
+     src: "/home/private/aws_credentials"
+     dest: "/home/ec2-user/.aws/credentials"
+     owner: ec2-user
+     group: ec2-user
+     mode: 0600
+
+ - name: Remove old backup keepalived dir
+   file:
+     path: "/etc/keepalived.backup"
+     state: absent
+
+ - name: Copy old keepalived configs to backup dir
+   copy:
+     remote_src: true
+     src: "/etc/keepalived/"
+     dest: "/etc/keepalived.backup/"
+
+ - name: Copying ip change script to config keppalived dir
+   template:
+     src: "change-eip.bash.j2"
+     dest: "/etc/keepalived/change-eip.bash"
+     owner: root
+     group: root
+     mode: 0777
+
+ - name: Copying actual configs to config keppalived dir
+   template:
+     src: "keepalived.conf.j2"
+     dest: "/etc/keepalived/keepalived.conf"
+     owner: root
+     group: root
+     mode: 0644
+   
+ - name: Restart keepalived
+   systemd:
+     name: keepalived
+     state: restarted

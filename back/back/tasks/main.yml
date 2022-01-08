@@ -14,12 +14,6 @@
      enabled: yes
    become : true
 
-# - name: Clone github repo with source code
-#   git:
-#     repo: "https://github.com/GomerSimpson0/configfiles.git"
-#     dest: "/home/jenkins/"
-#     force: true
-
  - name: Get current website tag
    stat:
      path: "/usr/share/nginx/{{ actual_tag }}/"
@@ -28,7 +22,6 @@
 # - name: var
 #   debug:
 #     var: is_equal_tag
-
 
  - block:
    - name: Creating dest dir with actual dir tag

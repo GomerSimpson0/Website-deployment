@@ -1,8 +1,8 @@
 ---
  - name: Deploy actual load balancers configs
-   hosts: lb
+   hosts: lb-back
    gather_facts: false
    become: true
    
    roles:
-     - lb
+     - lb-back
