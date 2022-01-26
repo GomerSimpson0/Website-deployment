@@ -1,0 +1,6 @@
+- name: Deploy actual website code and nginx configs
+  hosts: bibl
+  gather_facts: false
+
+  roles:
+    - bibl

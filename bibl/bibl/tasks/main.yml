@@ -1,0 +1,31 @@
+---
+# tasks file for web_deploy
+
+ - name: Update nginx
+   yum: 
+     name: nginx
+     state: latest
+   become: yes
+
+ - name: Start and enable nginx
+   systemd:
+     name: nginx
+     state: started
+     enabled: yes
+   become : true
+
+ - name: Copy actual website code
+   git:
+     clone: yes
+     dest: "/home/ec2-user/site"
+     repo: "https://github.com/mishkabtw/site.git"
+
+ - name: Move actual website code to target dir
+   copy:
+     src: "/home/ec2-user/site/"
+     dest: "/var/www/html/"
+     mode: 0555
+     owner: root
+     group: root
+     remote_src: yes
+   become: yes

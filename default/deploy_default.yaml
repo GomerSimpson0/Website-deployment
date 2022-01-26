@@ -2,7 +2,7 @@
 
 - name: Actual configs deployment
   gather_facts: false
-  hosts: all
+  hosts: infra
     
   roles:
     - default
